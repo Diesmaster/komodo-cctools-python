@@ -48,8 +48,8 @@ def def_credentials(chain):
 def rpc_connect(rpc_user, rpc_password, port):
     try:
         rpc_connection = Proxy("http://%s:%s@127.0.0.1:%d"%(rpc_user, rpc_password, port))
-    except Exception:
-        raise Exception("Connection error! Probably no daemon on selected port.")
+    except Exception as e:
+        raise Exception(e)
     return rpc_connection
 
 
@@ -61,6 +61,43 @@ def getinfo(rpc_connection):
         raise Exception("Connection error!")
     return getinfo
 
+def createrawtransaction(rpc_connection, txid, vout, address, amount):
+    try:
+        txid_vout = [{ "txid": txid, "vout":vout }]
+        address_amount = {address: amount}
+
+        rawtransaction = rpc_connection.createrawtransaction(txid_vout, address_amount)
+    except Exception as e:
+        raise Exception(e)
+    return rawtransaction
+
+def signmessage(rpc_connection, address, message):
+    try:
+        signature = rpc_connection.signmessage(address, message)
+    except Exception as e:
+        raise Exception(e)
+    return signature
+
+def importprivkey(rpc_connection, privkey):
+    try:
+        message = rpc_connection.importprivkey(privkey)
+    except Exception as e:
+        raise Exception(e)
+    return message
+
+def sendtoaddress(rpc_connection, address, amount):
+    try:
+        message = rpc_connection.sendtoaddress(address, amount)
+    except Exception as e:
+        raise Exception(e)
+    return message
+
+def validateaddress(rpc_connection, address):
+    try:
+        valid = rpc_connection.validateaddress(address)
+    except Exception as e:
+        raise Exception(e)
+    return valid
 
 def sendrawtransaction(rpc_connection, hex):
     tx_id = rpc_connection.sendrawtransaction(hex)
